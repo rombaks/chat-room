@@ -5,6 +5,8 @@ from typing import Optional
 
 HOST = "127.0.0.1"
 PORT = 12345
+DISCONNECT_MESSAGE = "!bb"
+
 
 clients_list = {}
 
@@ -35,6 +37,12 @@ def send_chat_message(name: str, text: str, address: str) -> None:
     sendall_except_user(name, chat_message)
 
 
+def send_disconnect_message(name: str) -> None:
+    disconnect_message = f"{name} leave CHAT"
+    print(f"[USER_DISCONNECT]: {disconnect_message}")
+    sendall_except_user(name, disconnect_message)
+
+
 def sendall_except_user(name: str, message: str) -> None:
     error_clients = []
 
@@ -50,8 +58,18 @@ def sendall_except_user(name: str, message: str) -> None:
 
 def clean_clients_list(error_clients: list[Optional[socket.socket]]) -> None:
     for client in error_clients:
-        clients_list.pop(client)
-        print(f"[ACTIVE_CLIENTS]: {len(clients_list)}")
+        remove_from_clients_list(client=client)
+
+
+def remove_from_clients_list(client: socket.socket) -> None:
+    clients_list.pop(client)
+    print(f"[ACTIVE_CLIENTS]: {len(clients_list)}")
+
+
+def disconnect_client(client: socket.socket) -> None:
+    username = clients_list.get(client)
+    send_disconnect_message(username)
+    remove_from_clients_list(client=client)
 
 
 def new_client(client: socket.socket, username: str) -> None:
@@ -60,8 +78,17 @@ def new_client(client: socket.socket, username: str) -> None:
 
     with client:
         while True:
-            message = client.recv(1024).decode("utf-8")
-            send_chat_message(username, message, address)
+            try:
+                message = client.recv(1024).decode("utf-8")
+            except socket.error:
+                disconnect_client(client=client)
+                break
+
+            if message == DISCONNECT_MESSAGE:
+                disconnect_client(client=client)
+                break
+            elif message:
+                send_chat_message(username, message, address)
 
 
 def start_new_client_thread(client: socket.socket, username: str) -> None:
