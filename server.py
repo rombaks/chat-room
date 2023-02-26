@@ -16,6 +16,12 @@ logging.basicConfig(
 )
 
 
+def print_starting_info():
+    print("[SERVER_STARTED]")
+    logging.info("[SERVER_STARTED]")
+    print("HINT: press 'Ctrl + C' to shutdown.")
+
+
 def sendall_except_user(name: str, message: str) -> None:
     error_clients = []
 
@@ -71,7 +77,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server:
     server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server.bind((HOST, PORT))
     server.listen()
-    print("[SERVER_STARTED]")
+    print_starting_info()
 
     while True:
         client, _ = server.accept()
