@@ -1,3 +1,4 @@
+import logging
 import socket
 import threading
 from typing import Optional
@@ -6,6 +7,13 @@ HOST = "127.0.0.1"
 PORT = 12345
 
 clients_list = {}
+
+logging.basicConfig(
+    filename="server.log",
+    encoding="utf-8",
+    level=logging.DEBUG,
+    format="%(asctime)s %(message)s",
+)
 
 
 def sendall_except_user(name: str, message: str) -> None:
