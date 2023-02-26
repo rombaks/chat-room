@@ -1,5 +1,6 @@
 import socket
 import threading
+from typing import Optional
 
 HOST = "127.0.0.1"
 PORT = 12345
@@ -33,15 +34,13 @@ def new_client(client: socket.socket, username: str) -> None:
 
     with client:
         while True:
-            data = client.recv(1024)
-            if not data:
-                break
-            print(f"Received {data}")
-            client.sendall(b"Hello client")
+            message = client.recv(1024).decode("utf-8")
+            chat_message = f"{username}: {message}"
+            sendall_except_user(username, chat_message)
 
 
-def start_new_client_thread(client: socket.socket) -> None:
-    thread = threading.Thread(target=new_client, args=(client,))
+def start_new_client_thread(client: socket.socket, username: str) -> None:
+    thread = threading.Thread(target=new_client, args=(client, username))
     thread.daemon = True
     thread.start()
 
@@ -69,4 +68,4 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server:
     while True:
         client, _ = server.accept()
         username = register_username(client)
-        start_new_client_thread(client)
+        start_new_client_thread(client, username)
