@@ -21,12 +21,17 @@ def start_send_recieve_threads(client: socket.socket) -> None:
 
     t2 = threading.Thread(target=recieve_message, args=(client,))
     t2.start()
-HOST = "127.0.0.1"
-PORT = 12345
 
-with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-    s.connect((HOST, PORT))
-    s.sendall(b"Hello server")
-    data = s.recv(1024)
 
-print(f"Received {data}")
+def run_client(host: str, port: str):
+    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    client.connect((host, port))
+
+    start_send_recieve_threads(client=client)
+
+
+if __name__ == "__main__":
+    HOST = "127.0.0.1"
+    PORT = 12345
+
+    run_client(host=HOST, port=PORT)
