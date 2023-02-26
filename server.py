@@ -29,6 +29,12 @@ def send_join_info(name: str) -> None:
     sendall_except_user(name, join_message)
 
 
+def send_chat_message(name: str, text: str, address: str) -> None:
+    chat_message = f"{name}: {text}"
+    logging.info(f"{address}::: {chat_message}")
+    sendall_except_user(name, chat_message)
+
+
 def sendall_except_user(name: str, message: str) -> None:
     error_clients = []
 
@@ -49,13 +55,13 @@ def clean_clients_list(error_clients: list[Optional[socket.socket]]) -> None:
 
 
 def new_client(client: socket.socket, username: str) -> None:
+    address = client.getpeername()
     send_join_info(username)
 
     with client:
         while True:
             message = client.recv(1024).decode("utf-8")
-            chat_message = f"{username}: {message}"
-            sendall_except_user(username, chat_message)
+            send_chat_message(username, message, address)
 
 
 def start_new_client_thread(client: socket.socket, username: str) -> None:
