@@ -7,7 +7,18 @@ PORT = 12345
 clients_list = {}
 
 
-def new_client(client: socket.socket) -> None:
+def sendall_except_user(name: str, message: str) -> None:
+    error_clients = []
+
+    for client in clients_list:
+        if clients_list[client] != name:
+            try:
+                client.send(message.encode("utf-8"))
+            except socket.error:
+                error_clients.append(client)
+
+    clean_clients_list(error_clients=error_clients)
+
     with client:
         while True:
             data = client.recv(1024)
