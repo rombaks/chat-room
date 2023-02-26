@@ -7,6 +7,11 @@ def send_message(client: socket.socket) -> None:
             client.send(message.encode("utf-8"))
 
 
+def recieve_message(client: socket.socket) -> None:
+    while True:
+        message = client.recv(1024).decode("utf-8")
+        print(message)
+
 HOST = "127.0.0.1"
 PORT = 12345
 
