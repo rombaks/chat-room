@@ -26,6 +26,11 @@ def clean_clients_list(error_clients: list[Optional[socket.socket]]) -> None:
         print(f"[ACTIVE_CLIENTS]: {len(clients_list)}")
 
 
+def new_client(client: socket.socket, username: str) -> None:
+    join_message = f"{username} joined CHAT"
+    print(f"[USER_CONNECT]: {join_message}")
+    sendall_except_user(username, join_message)
+
     with client:
         while True:
             data = client.recv(1024)
