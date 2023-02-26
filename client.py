@@ -1,4 +1,6 @@
 import socket
+import threading
+
 
 def send_message(client: socket.socket) -> None:
     while True:
@@ -12,6 +14,13 @@ def recieve_message(client: socket.socket) -> None:
         message = client.recv(1024).decode("utf-8")
         print(message)
 
+
+def start_send_recieve_threads(client: socket.socket) -> None:
+    t1 = threading.Thread(target=send_message, args=(client,))
+    t1.start()
+
+    t2 = threading.Thread(target=recieve_message, args=(client,))
+    t2.start()
 HOST = "127.0.0.1"
 PORT = 12345
 
