@@ -22,6 +22,13 @@ def print_starting_info():
     print("HINT: press 'Ctrl + C' to shutdown.")
 
 
+def send_join_info(name: str) -> None:
+    join_message = f"{name} joined CHAT"
+    print(f"[USER_CONNECT]: {join_message}")
+    print(f"[ACTIVE_CLIENTS]: {len(clients_list)}")
+    sendall_except_user(name, join_message)
+
+
 def sendall_except_user(name: str, message: str) -> None:
     error_clients = []
 
@@ -42,9 +49,7 @@ def clean_clients_list(error_clients: list[Optional[socket.socket]]) -> None:
 
 
 def new_client(client: socket.socket, username: str) -> None:
-    join_message = f"{username} joined CHAT"
-    print(f"[USER_CONNECT]: {join_message}")
-    sendall_except_user(username, join_message)
+    send_join_info(username)
 
     with client:
         while True:
