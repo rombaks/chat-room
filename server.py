@@ -111,6 +111,13 @@ def register_username(client: socket.socket) -> str:
     return username
 
 
+def shutdown_server(server: socket.socket) -> None:
+    server.shutdown(socket.SHUT_RDWR)
+    server.close()
+    print("[SERVER_SHUTDOWN]")
+    logging.info("[SERVER_SHUTDOWN]")
+
+
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server:
     server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server.bind((HOST, PORT))
@@ -118,6 +125,10 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server:
     print_starting_info()
 
     while True:
-        client, _ = server.accept()
-        username = register_username(client)
-        start_new_client_thread(client, username)
+        try:
+            client, _ = server.accept()
+            username = register_username(client)
+            start_new_client_thread(client, username)
+        except KeyboardInterrupt:
+            shutdown_server(server=server)
+            break
