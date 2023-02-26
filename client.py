@@ -1,10 +1,15 @@
 import socket
 import threading
 
+DISCONNECT_MESSAGE = "!bb"
+
 
 def send_message(client: socket.socket) -> None:
     while True:
         message = input("You: ").strip()
+        if message == DISCONNECT_MESSAGE:
+            disconnect_client(client)
+            break
         if message:
             client.send(message.encode("utf-8"))
 
@@ -13,6 +18,11 @@ def recieve_message(client: socket.socket) -> None:
     while True:
         message = client.recv(1024).decode("utf-8")
         print(message)
+
+
+def disconnect_client(client: socket.socket) -> None:
+    client.close()
+    print("\n-= See you later! =-")
 
 
 def start_send_recieve_threads(client: socket.socket) -> None:
