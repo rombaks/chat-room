@@ -120,15 +120,19 @@ def shutdown_server(server: socket.socket) -> None:
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server:
     server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    server.bind((HOST, PORT))
-    server.listen()
-    print_starting_info()
+    try:
+        server.bind((HOST, PORT))
+        server.listen()
+        print_starting_info()
 
-    while True:
-        try:
-            client, _ = server.accept()
-            username = register_username(client)
-            start_new_client_thread(client, username)
-        except KeyboardInterrupt:
-            shutdown_server(server=server)
-            break
+        while True:
+            try:
+                client, _ = server.accept()
+                username = register_username(client)
+                start_new_client_thread(client, username)
+            except KeyboardInterrupt:
+                shutdown_server(server=server)
+                break
+            
+    except Exception as e:
+        print(f"Oh, no!\n\nServer failed on {HOST}:{PORT}\n{e}\nSee you later!")
