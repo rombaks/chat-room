@@ -19,6 +19,13 @@ def sendall_except_user(name: str, message: str) -> None:
 
     clean_clients_list(error_clients=error_clients)
 
+
+def clean_clients_list(error_clients: list[Optional[socket.socket]]) -> None:
+    for client in error_clients:
+        clients_list.pop(client)
+        print(f"[ACTIVE_CLIENTS]: {len(clients_list)}")
+
+
     with client:
         while True:
             data = client.recv(1024)
