@@ -1,5 +1,12 @@
 import socket
 
+def send_message(client: socket.socket) -> None:
+    while True:
+        message = input("You: ").strip()
+        if message:
+            client.send(message.encode("utf-8"))
+
+
 HOST = "127.0.0.1"
 PORT = 12345
 
