@@ -23,9 +23,17 @@ def start_send_recieve_threads(client: socket.socket) -> None:
     t2.start()
 
 
+def register_username(client: socket.socket) -> None:
+    name = input("HELLO! Put your name here: ")
+    print(f"-= {name}, welcome to the chat room! =-\n")
+    client.send(name.encode("utf-8"))
+
+
 def run_client(host: str, port: str):
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client.connect((host, port))
+
+    register_username(client=client)
 
     start_send_recieve_threads(client=client)
 
