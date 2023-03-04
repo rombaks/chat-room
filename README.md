@@ -1,2 +1,2 @@
 # chat-room
-Simple chat
+CLI chat on socket and threads
